@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dan's Golf Ledger — Courses by Prestige</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f1e8;
+    --paper: #faf7f0;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #888178;
+    --forest: #1f3d2e;
+    --forest-deep: #0f2517;
+    --brass: #a8842c;
+    --brass-light: #c4a14a;
+    --rule: #d8cfb8;
+    --shadow: rgba(31, 61, 46, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+    background-image:
+      radial-gradient(ellipse at top left, rgba(168, 132, 44, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(31, 61, 46, 0.04) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* ===== MASTHEAD ===== */
+  .masthead {
+    text-align: center;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 50px;
+    position: relative;
+  }
+
+  .masthead::before, .masthead::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    width: 60px;
+    height: 3px;
+    background: var(--brass);
+  }
+  .masthead::before { left: 50%; transform: translateX(-50%); }
+
+  .eyebrow {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    color: var(--brass);
+    text-transform: none;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .masthead h1 {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    color: var(--forest-deep);
+    letter-spacing: -0.015em;
+    margin-bottom: 12px;
+  }
+
+  .masthead h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--brass);
+  }
+
+  .masthead .tagline {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+    margin-top: 14px;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== STATS STRIP ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 60px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 0;
+  }
+
+  .stat {
+    text-align: center;
+    border-right: 1px solid var(--rule);
+    padding: 8px 16px;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-number {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-faint);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  /* ===== ARCHITECTS SECTION ===== */
+  .architects {
+    margin-bottom: 60px;
+  }
+
+  .architects-eyebrow {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    color: var(--brass);
+    text-transform: none;
+    margin-bottom: 24px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .architects-multi {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0;
+    margin-bottom: 32px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .arch-row {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 16px;
+    padding: 14px 16px;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    transition: background 0.15s;
+  }
+  .arch-row:hover { background: var(--paper); }
+
+  .arch-count {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--brass);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .arch-info { min-width: 0; }
+
+  .arch-name {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--forest-deep);
+    line-height: 1.25;
+    margin-bottom: 2px;
+  }
+
+  .arch-courses {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    color: var(--ink-faint);
+    text-transform: none;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .architects-single {
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .single-label {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .single-list {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .single-list span {
+    color: var(--forest-deep);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .architects-footnote {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-faint);
+    text-align: center;
+    margin-top: 24px;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  /* ===== TIER NAVIGATION ===== */
+  .tier-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+  }
+
+  .tier-nav a {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    transition: all 0.2s;
+    background: var(--paper);
+    font-weight: 500;
+  }
+
+  .tier-nav a:hover {
+    background: var(--forest);
+    color: var(--paper);
+    border-color: var(--forest);
+  }
+
+  /* ===== TIER SECTIONS ===== */
+  .tier {
+    margin-bottom: 70px;
+    scroll-margin-top: 20px;
+  }
+
+  .tier-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .tier-mark {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    letter-spacing: normal;
+    color: var(--brass);
+    font-weight: 600;
+  }
+
+  .tier-title {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    color: var(--forest-deep);
+  }
+
+  .tier-count {
+    margin-left: auto;
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: normal;
+    font-weight: 400;
+  }
+
+  .tier-desc {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+    max-width: 680px;
+    font-size: 1.02rem;
+  }
+
+  /* ===== COURSE LIST ===== */
+  .courses {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .course {
+    display: grid;
+    grid-template-columns: 50px 1fr 200px;
+    gap: 24px;
+    padding: 22px 4px;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+    transition: background 0.15s;
+  }
+
+  .course:hover {
+    background: var(--paper);
+  }
+
+  .course-rank {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--brass);
+    line-height: 1;
+    font-feature-settings: "lnum", "tnum";
+  }
+
+  .course-body { min-width: 0; }
+
+  .course-name {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--forest-deep);
+    line-height: 1.25;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--brass);
+    color: var(--paper);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+
+  .course-price {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--brass);
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: -2px;
+  }
+
+  .course-price .price-amount {
+    color: var(--forest-deep);
+    font-weight: 700;
+  }
+
+  .course-price .price-note {
+    color: var(--ink-faint);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    margin-left: 4px;
+    font-style: italic;
+  }
+
+  .course-meta {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13.5px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .course-note {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .course-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .tag {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: normal;
+    text-transform: none;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tag-top100 {
+    background: var(--brass);
+    color: var(--paper);
+  }
+  .tag-private {
+    background: var(--forest);
+    color: var(--paper);
+  }
+  .tag-major {
+    background: #5a2828;
+    color: var(--paper);
+  }
+  .tag-formerly {
+    background: transparent;
+    border: 1px solid var(--brass);
+    color: var(--brass);
+  }
+  .tag-9hole {
+    background: transparent;
+    border: 1px solid var(--ink-faint);
+    color: var(--ink-faint);
+  }
+  .tag-international {
+    background: #2c4a6e;
+    color: var(--paper);
+  }
+
+  /* ===== HORIZON SECTION ===== */
+  .horizon {
+    margin-top: 80px;
+    padding: 40px;
+    background: var(--forest-deep);
+    color: var(--paper);
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .horizon::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 40px; right: 40px;
+    height: 3px;
+    background: var(--brass);
+  }
+
+  .horizon h2 {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--paper);
+  }
+
+  .horizon h2 em {
+    color: var(--brass-light);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .horizon p {
+    color: rgba(245, 241, 232, 0.85);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .horizon ul {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .horizon li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(168, 132, 44, 0.2);
+    color: rgba(245, 241, 232, 0.9);
+  }
+  .horizon li:last-child { border-bottom: none; }
+
+  .horizon li strong {
+    color: var(--brass-light);
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  /* ===== FOOTER ===== */
+  .colophon {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 720px) {
+    .container { padding: 30px 20px 60px; }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 0; }
+    .stat:nth-child(2) { border-right: none; }
+    .stat { padding: 16px 8px; border-bottom: 1px solid var(--rule); }
+    .stat:nth-child(3), .stat:nth-child(4) { border-bottom: none; }
+    .course {
+      grid-template-columns: 40px 1fr;
+      gap: 14px;
+    }
+    .course-tags {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-top: 8px;
+    }
+    .tier-header { flex-wrap: wrap; gap: 12px; }
+    .tier-count { margin-left: 0; }
+    .horizon { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="eyebrow">Volume I · 2026 Edition</div>
+    <h1>Dan's Golf <em>Ledger</em></h1>
+    <p class="tagline">A working catalogue of every course played, ordered by prestige rather than affection. Updated as new rounds are entered into the record.</p>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number">61</div>
+      <div class="stat-label">Courses Played</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">4</div>
+      <div class="stat-label">Currently Top 100</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">5</div>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">1</div>
+      <div class="stat-label">Major Host</div>
+    </div>
+  </div>
+
+  <!-- ARCHITECTS -->
+  <section class="architects">
+    <div class="architects-eyebrow">Architects of Record</div>
+
+    <div class="architects-multi">
+      <div class="arch-row">
+        <div class="arch-count">4</div>
+        <div class="arch-info">
+          <div class="arch-name">Alister MacKenzie</div>
+          <div class="arch-courses">Cypress Point · Cal Club · Northwood · Healdsburg</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">4</div>
+        <div class="arch-info">
+          <div class="arch-name">Robert Trent Jones Jr.</div>
+          <div class="arch-courses">Bodega · Arrowhead · Presidio · Chateau Whistler</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">Bob Baldock</div>
+          <div class="arch-courses">The Institute · Mililani</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">Arnold Palmer</div>
+          <div class="arch-courses">HMB Old · Turtle Bay</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">Robert Trent Jones Sr.</div>
+          <div class="arch-courses">Crystal Springs · Incline Village</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">Rees Jones</div>
+          <div class="arch-courses">Poppy Ridge · Corica Park</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">Tom Weiskopf</div>
+          <div class="arch-courses">Olympic Cliffs · Cabo del Sol</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-count">2</div>
+        <div class="arch-info">
+          <div class="arch-name">William P. Bell</div>
+          <div class="arch-courses">Tilden Park · Stanford</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="architects-single">
+      <div class="single-label">Single Rounds With</div>
+      <div class="single-list">
+        <span>George C. Thomas Jr.</span> · <span>Coore-Crenshaw</span> · <span>Tom Fazio</span> · <span>Tom Doak</span> · <span>Jack Nicklaus</span> · <span>Pete Dye</span> · <span>Mike Strantz</span> · <span>Fred Couples</span> · <span>Gary Player</span> · <span>Johnny Miller</span> · <span>Arthur Hills</span> · <span>H. Chandler Egan</span> · <span>Baxter Spann</span> · <span>Willie Watson</span> · <span>John Darby</span> · <span>Brad Bell</span> · <span>Cary Bickler</span> · <span>Scott Miller</span> · <span>Greg Norman</span> · <span>Bruce Summerhays</span> · <span>Jack Fleming</span> · <span>Robert Muir Graves</span> · <span>Boyd Barr</span>
+      </div>
+      <div class="architects-footnote">42 of 61 courses with attributed architects · 19 unattributed (mostly munis)</div>
+    </div>
+  </section>
+
+  <!-- NAV -->
+  <nav class="tier-nav">
+    <a href="#special">I · Special</a>
+    <a href="#quality">II · Quality</a>
+    <a href="#runofmill">III · Run of the Mill</a>
+    <a href="#munis">IV · Cheap Munis</a>
+  </nav>
+
+  <!-- ===== TIER I: SPECIAL ===== -->
+  <section class="tier" id="special">
+    <div class="tier-header">
+      <div class="tier-mark">Tier I</div>
+      <h2 class="tier-title">Special</h2>
+      <div class="tier-count">12 courses</div>
+    </div>
+    <p class="tier-desc">Trophy courses. Top 100 ranks, ultra-private clubs, and destination golf you'd brag about playing.</p>
+
+    <div class="courses">
+      <div class="course">
+        <div class="course-rank">1</div>
+        <div class="course-body">
+          <div class="course-name">Cypress Point Club <span class="star">★</span></div>
+          <div class="course-meta">Pebble Beach, CA · Alister MacKenzie &amp; Robert Hunter 1928</div>
+          <div class="course-note">#3 in America on Golf Digest's 100 Greatest. MacKenzie's finest work alongside Augusta National. ~250 members, invite-only, no commercial tournaments since 1990. Played June 11 — the 16th is the most iconic golf hole on Earth. Bogey on #16 and birdie on #8.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-top100">Top 3 America</span><span class="tag tag-private">Ultra-Private</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">2</div>
+        <div class="course-body">
+          <div class="course-name">The Institute</div>
+          <div class="course-meta">Morgan Hill, CA · Bob Baldock / Fry family 2001</div>
+          <div class="course-note">Arguably the most exclusive golf club in America — fewer than 50 members total, built by the Fry family on 1,500 acres in the Morgan Hill hills. Augusta-inspired holes, mandatory caddies, no Golf Digest ranking because panelists can't get on to score it. Played October 29.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-private">&lt;50 Members</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">3</div>
+        <div class="course-body">
+          <div class="course-name">Kapalua Plantation <span class="star">★</span></div>
+          <div class="course-meta">Maui, Hawaii · Coore-Crenshaw 1991</div>
+          <div class="course-price"><span class="price-amount">$529</span></div>
+          <div class="course-note">#23 on Golf Digest's America's 100 Greatest Public (2025–26). Hosts the PGA Tour's Sentry Tournament of Champions every January.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-top100">Top 100 Public #23</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">4</div>
+        <div class="course-body">
+          <div class="course-name">California Golf Club <span class="star">★</span></div>
+          <div class="course-meta">South San Francisco, CA · MacKenzie · Phillips restoration</div>
+          <div class="course-price"><span class="price-amount">$150</span> <span class="price-note">guest fee</span></div>
+          <div class="course-note">#57 on Golf Digest's America's 100 Greatest (2025–26) — the elite combined list. #29 on Golfweek's Top 200 Classic. Played April 2026.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-top100">Top 100 Combined #57</span><span class="tag tag-private">Private</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">5</div>
+        <div class="course-body">
+          <div class="course-name">The Preserve</div>
+          <div class="course-meta">Carmel, CA · Tom Fazio 2000</div>
+          <div class="course-note">Ultra-private with ~300 members and no resort access — more exclusive than most ranked courses. Currently #115 Second 100 Greatest. You ranked it above Harding personally.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-private">Restricted</span><span class="tag tag-formerly">Formerly Top 100</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">6</div>
+        <div class="course-body">
+          <div class="course-name">Stanford Golf Course</div>
+          <div class="course-meta">Stanford, CA · George C. Thomas Jr. &amp; William P. Bell 1930</div>
+          <div class="course-price"><span class="price-amount">$125</span> <span class="price-note">guest fee</span></div>
+          <div class="course-note">#57 on Golf Digest's Best in California (2025-26). Was on America's 100 Greatest 1969-1976. Golden Age design by the same Thomas/Bell team behind Riviera and Bel-Air. Tom Watson, Tiger Woods, and Mickey Wright honed their games here. Restricted to Stanford affiliates and their guests.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-private">Ultra-Private</span><span class="tag tag-formerly">Formerly Top 100</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">7</div>
+        <div class="course-body">
+          <div class="course-name">TPC Harding Park</div>
+          <div class="course-meta">San Francisco, CA · Willie Watson 1925</div>
+          <div class="course-price"><span class="price-amount">$150</span></div>
+          <div class="course-note">Hosted the 2020 PGA Championship (Collin Morikawa). Generally regarded as the best municipal course in America. Tournament-tough, panelist-respected.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-major">PGA Championship Host</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">8</div>
+        <div class="course-body">
+          <div class="course-name">Black Mesa <span class="star">★</span></div>
+          <div class="course-meta">La Mesilla, NM · Baxter Spann 2003</div>
+          <div class="course-note">#85 on America's 100 Greatest Public (2025–26). High-desert routing through arroyos and piñon — one of the best public courses in the Southwest.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-top100">Top 100 Public #85</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">9</div>
+        <div class="course-body">
+          <div class="course-name">Jack's Point</div>
+          <div class="course-meta">Queenstown, New Zealand · John Darby 2008</div>
+        <div class="course-price"><span class="price-amount">$273</span></div>
+          <div class="course-note">On various world top-100 lists (top100golfcourses.com), though not Golf Digest's US-only rankings. Iconic Lake Wakatipu setting with The Remarkables backdrop.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-international">World Top 100</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">10</div>
+        <div class="course-body">
+          <div class="course-name">Half Moon Bay (Ocean)</div>
+          <div class="course-meta">Half Moon Bay, CA · Arthur Hills 1997</div>
+        <div class="course-price"><span class="price-amount">$187</span></div>
+          <div class="course-note">Was on Golf Digest's Top 100 Public list in past cycles. The dramatic coastal routing — bluff-top closing holes overlooking the Pacific make it one of the most photogenic public courses in California.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-formerly">Formerly Top 100</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">11</div>
+        <div class="course-body">
+          <div class="course-name">Maderas</div>
+          <div class="course-meta">Poway, CA · Johnny Miller / Robert Muir Graves 1999</div>
+          <div class="course-note">Was on Top 100 Public 2013–2016, peaked at #89. Currently #20 California public list. Dramatic canyon routing.</div>
+        </div>
+        <div class="course-tags"><span class="tag tag-formerly">Formerly Top 100</span></div>
+      </div>
+
+      <div class="course">
+        <div class="course-rank">12</div>
+        <div class="course-body">
+          <div class="course-name">Old Greenwood</div>
+          <div class="course-meta">Truckee, CA · Jack Nicklaus 2004</div>
+          <div class="course-note">Premier Tahoe-area golf, part of the Tahoe Mountain Club private resort. Major tournament prep venue.</div>
+        </div>
+        <div class="course-tags"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TIER II: QUALITY ===== -->
+  <section class="tier" id="quality">
+    <div class="tier-header">
+      <div class="tier-mark">Tier II</div>
+      <h2 class="tier-title">Quality</h2>
+      <div class="tier-count">25 courses</div>
+    </div>
+    <p class="tier-desc">Very good courses worth a drive. Solid daily-fees, member tracks, and resort layouts that hold up architecturally.</p>
+
+    <div class="courses">
+      <div class="course"><div class="course-rank">13</div>
+        <div class="course-body"><div class="course-name">Yocha Dehe</div>
+        <div class="course-meta">Brooks, CA · Brad Bell 2008</div>
+        <div class="course-price"><span class="price-amount">$119</span></div>
+        <div class="course-note">#6 on Golfweek's California Best You Can Play. Top-tier conditioning and a strong RTJ-style routing.</div></div>
+        <div class="course-tags"><span class="tag tag-top100">CA Top 10</span></div></div>
+
+      <div class="course"><div class="course-rank">14</div>
+        <div class="course-body"><div class="course-name">Fairmont Chateau Whistler</div>
+        <div class="course-meta">Whistler, BC · RTJ Jr. 1993</div>
+        <div class="course-price"><span class="price-amount">C$300</span> <span class="price-note">summer, cart incl. · ≈ US$209</span></div>
+        <div class="course-note">RTJ Jr. carved it into the flank of Blackcomb — 400+ feet of elevation change, creeks, granite, old Douglas firs. Golf Digest's Best New Resort Course in Canada when it opened. #47 on SCOREGolf's Top 59 Public in Canada (2025).</div></div>
+        <div class="course-tags"><span class="tag tag-international">Canada</span><span class="tag tag-top100">Canada Public #47</span></div></div>
+
+      <div class="course"><div class="course-rank">15</div>
+        <div class="course-body"><div class="course-name">The Course at Wente Vineyards</div>
+        <div class="course-meta">Livermore, CA · Greg Norman 1998</div>
+        <div class="course-price"><span class="price-amount">$172</span></div>
+        <div class="course-note">Norman's upscale Livermore Valley daily-fee through vineyards, oak woodland, and grassland hills — slope 143 from the tips. Hosted the Nationwide Tour's Livermore Valley Wine Country Championship 2006–08. Listed in Golf Digest's Best Courses You Can Play in California.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">16</div>
+        <div class="course-body"><div class="course-name">Half Moon Bay (Old)</div>
+        <div class="course-meta">Half Moon Bay, CA · Francis Duane / Arnold Palmer 1973</div>
+        <div class="course-note">The inland sister course to Ocean. Solid Bay Area public — wide fairways, parkland routing, less dramatic than Ocean but still a strong round.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">17</div>
+        <div class="course-body"><div class="course-name">Silver Creek Valley CC</div>
+        <div class="course-meta">San Jose, CA · Mike Strantz 1991</div>
+        <div class="course-price"><span class="price-amount">$150</span> <span class="price-note">guest fee</span></div>
+        <div class="course-note">Strantz's Bay Area private — visually dramatic, big elevation changes, elite club.</div></div>
+        <div class="course-tags"><span class="tag tag-private">Private</span></div></div>
+
+      <div class="course"><div class="course-rank">18</div>
+        <div class="course-body"><div class="course-name">Kelly Plantation</div>
+        <div class="course-meta">Destin, FL · Fred Couples / Gene Bates 2000</div>
+        <div class="course-note">Top Destin daily-fee. Couples-designed, runs along Choctawhatchee Bay. Best of the Florida Panhandle group.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">19</div>
+        <div class="course-body"><div class="course-name">Royal Hawaiian</div>
+        <div class="course-meta">Kailua, HI · Pete and P.B. Dye 1995</div>
+        <div class="course-note">"Jurassic Park" reputation — set in a Ko'olau valley with Pete Dye fingerprints and dramatic visual punctuation.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">20</div>
+        <div class="course-body"><div class="course-name">Bodega Harbour</div>
+        <div class="course-meta">Bodega Bay, CA · RTJ Jr. 1977</div>
+        <div class="course-note">NorCal coastal links. The closing stretch by the ocean is the draw — wild, windy, scenic.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">21</div>
+        <div class="course-body"><div class="course-name">Turtle Bay (Palmer)</div>
+        <div class="course-meta">Kahuku, HI · Arnold Palmer / Ed Seay 1992</div>
+        <div class="course-note">Hosts the PGA Tour Champions' Mitsubishi Electric Championship. North Shore Oahu resort flagship.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">22</div>
+        <div class="course-body"><div class="course-name">Arrowhead</div>
+        <div class="course-meta">Littleton, CO · RTJ Jr. 1973</div>
+        <div class="course-note">Iconic red rock formations frame the routing. Higher prestige and price than Front Range peers.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">23</div>
+        <div class="course-body"><div class="course-name">Cabo del Sol (Desert)</div>
+        <div class="course-meta">Los Cabos, Mexico · Tom Weiskopf 2001</div>
+        <div class="course-note">The inland sister to Cabo del Sol's famed Ocean Course. Now part of Cove Club, the Discovery Land Company private development. Solid Weiskopf routing through desert terrain.</div></div>
+        <div class="course-tags"><span class="tag tag-international">Mexico</span><span class="tag tag-private">Cove Club</span></div></div>
+
+      <div class="course"><div class="course-rank">24</div>
+        <div class="course-body"><div class="course-name">Crystal Springs</div>
+        <div class="course-meta">Burlingame, CA · Herbert Fowler / RTJ Sr. 1924</div>
+        <div class="course-price"><span class="price-amount">$115</span></div>
+        <div class="course-note">Strong Bay Area public set in a watershed reserve. Solid panelist reputation.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">25</div>
+        <div class="course-body"><div class="course-name">Encinitas Ranch</div>
+        <div class="course-meta">Encinitas, CA · Cary Bickler 1998</div>
+        <div class="course-note">Top SD daily-fee with ocean views from the back nine.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">26</div>
+        <div class="course-body"><div class="course-name">Steele Canyon</div>
+        <div class="course-meta">Jamul, CA · Gary Player 1991</div>
+        <div class="course-note">27-hole Player design in the East County hills. Top tier of San Diego daily-fees.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">27</div>
+        <div class="course-body"><div class="course-name">Sandia Resort</div>
+        <div class="course-meta">Albuquerque, NM · Scott Miller 2005</div>
+        <div class="course-note">Premier Albuquerque resort course at the foot of the Sandia Mountains.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">28</div>
+        <div class="course-body"><div class="course-name">Presidio</div>
+        <div class="course-meta">San Francisco, CA · Robert Johnstone 1895 (Robert Trent Jones Jr. 2002 redo)</div>
+        <div class="course-price"><span class="price-amount">$124</span></div>
+        <div class="course-note">Historic SF club — oldest west of the Mississippi. Tight, wooded routing through the national park.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">29</div>
+        <div class="course-body"><div class="course-name">Tilden Park</div>
+        <div class="course-meta">Berkeley, CA · William Park Bell 1937</div>
+        <div class="course-price"><span class="price-amount">$101</span></div>
+        <div class="course-note">Highly regarded East Bay muni. Hilly, hard, character-rich. Tillinghast-era pedigree.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">30</div>
+        <div class="course-body"><div class="course-name">Pacific Grove Links</div>
+        <div class="course-meta">Pacific Grove, CA · H. Chandler Egan 1932</div>
+        <div class="course-note">"Poor man's Pebble" — front nine inland, back nine on the actual ocean cliffs. Genuine links character on the back.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">31</div>
+        <div class="course-body"><div class="course-name">Furry Creek</div>
+        <div class="course-meta">Furry Creek, BC · Robert Muir Graves 1993</div>
+        <div class="course-price"><span class="price-amount">C$72–145</span> <span class="price-note">dynamic, cart incl. · ≈ US$50–101</span></div>
+        <div class="course-note">Billed as "BC's most scenic golf course." Sea-to-Sky mountain track with blind shots and ravine carries, dropping to the 14th — a 211-yard par-3 on a rock peninsula in Howe Sound. Not on SCOREGolf's public list; the views carry it.</div></div>
+        <div class="course-tags"><span class="tag tag-international">Canada</span></div></div>
+
+      <div class="course"><div class="course-rank">32</div>
+        <div class="course-body"><div class="course-name">Northwood</div>
+        <div class="course-meta">Monte Rio, CA · Alister MacKenzie 1928</div>
+        <div class="course-note">MacKenzie 9-holer hidden in the redwoods. Architecturally significant beyond its size.</div></div>
+        <div class="course-tags"><span class="tag tag-9hole">9 Holes</span></div></div>
+
+      <div class="course"><div class="course-rank">33</div>
+        <div class="course-body"><div class="course-name">Healdsburg / Tayman Park</div>
+        <div class="course-meta">Healdsburg, CA · Alister MacKenzie 1922</div>
+        <div class="course-note">Another MacKenzie 9-holer in Sonoma. Historic, quirky, low-key.</div></div>
+        <div class="course-tags"><span class="tag tag-9hole">9 Holes</span></div></div>
+
+      <div class="course"><div class="course-rank">34</div>
+        <div class="course-body"><div class="course-name">Poppy Ridge</div>
+        <div class="course-meta">Livermore, CA · Rees Jones / Jay Blasi 2024 redesign</div>
+        <div class="course-price"><span class="price-amount">$125</span></div>
+        <div class="course-note">NCGA's home course. Recently redesigned by Jay Blasi — modernized, walkable, much improved over the original Rees Jones routing.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">35</div>
+        <div class="course-body"><div class="course-name">Olympic Club (Cliffs)</div>
+        <div class="course-meta">San Francisco, CA · Tom Weiskopf 2017</div>
+        <div class="course-note">The par-3 short course at Olympic — not the Lake. Fun, walkable, but architecturally separate from the major-championship course.</div></div>
+        <div class="course-tags"><span class="tag tag-private">Private Club</span></div></div>
+
+      <div class="course"><div class="course-rank">36</div>
+        <div class="course-body"><div class="course-name">Indian Valley</div>
+        <div class="course-meta">Novato, CA</div>
+        <div class="course-price"><span class="price-amount">$119</span></div>
+        <div class="course-note">Solid Marin track. Good rotation course for the North Bay set.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">37</div>
+        <div class="course-body"><div class="course-name">Corica Park (South)</div>
+        <div class="course-meta">Alameda, CA · Rees Jones renovation 2018</div>
+        <div class="course-price"><span class="price-amount">$115</span></div>
+        <div class="course-note">Best East Bay muni since the renovation. Wide fairways, big greens, well-conditioned.</div></div>
+        <div class="course-tags"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== TIER III: RUN OF THE MILL ===== -->
+  <section class="tier" id="runofmill">
+    <div class="tier-header">
+      <div class="tier-mark">Tier III</div>
+      <h2 class="tier-title">Run of the Mill</h2>
+      <div class="tier-count">18 courses</div>
+    </div>
+    <p class="tier-desc">Decent courses, fine for a casual round. Local daily-fees, mid-tier resort tracks, and second-string options.</p>
+
+    <div class="courses">
+      <div class="course"><div class="course-rank">38</div>
+        <div class="course-body"><div class="course-name">Peacock Gap</div>
+        <div class="course-meta">San Rafael, CA</div>
+        <div class="course-price"><span class="price-amount">$85</span></div>
+        <div class="course-note">Solid NorCal club, your regular spot. Beats most of its peers on conditioning.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">39</div>
+        <div class="course-body"><div class="course-name">Incline Village (Championship)</div>
+        <div class="course-meta">Incline Village, NV · RTJ Sr. 1964</div>
+        <div class="course-note">Tahoe RTJ Sr., scenic, but on the slow decline. Decent for a vacation round.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">40</div>
+        <div class="course-body"><div class="course-name">Coronado Muni</div>
+        <div class="course-meta">Coronado, CA</div>
+        <div class="course-note">Iconic SD muni — the hardest tee time in golf. Course itself is flat and unremarkable, but the location and history matter.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">41</div>
+        <div class="course-body"><div class="course-name">Mililani</div>
+        <div class="course-meta">Mililani, HI · Bob Baldock 1966</div>
+        <div class="course-price"><span class="price-amount">$160</span> <span class="price-note">visitor rate</span></div>
+        <div class="course-note">Central Oahu plateau course between the Waianae and Ko'olau ranges. Flat, walkable, lined with Norfolk pines; the century-old Waiahole Ditch guards the par-5 7th. Pleasant, but no Turtle Bay.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">42</div>
+        <div class="course-body"><div class="course-name">Terrace Downs</div>
+        <div class="course-meta">Canterbury, NZ</div>
+        <div class="course-note">NZ resort with mountain backdrop. Pleasant setting, average architecture.</div></div>
+        <div class="course-tags"><span class="tag tag-international">New Zealand</span></div></div>
+
+      <div class="course"><div class="course-rank">43</div>
+        <div class="course-body"><div class="course-name">Lincoln Park</div>
+        <div class="course-meta">San Francisco, CA</div>
+        <div class="course-note">Cliffside SF muni with Golden Gate views. Course is short and quirky, but the views carry it.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">44</div>
+        <div class="course-body"><div class="course-name">Regatta Bay</div>
+        <div class="course-meta">Destin, FL</div>
+        <div class="course-note">Solid Destin daily-fee. Decent Florida resort track.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">45</div>
+        <div class="course-body"><div class="course-name">Raven (Sandestin)</div>
+        <div class="course-meta">Miramar Beach, FL</div>
+        <div class="course-note">Decent Sandestin resort track. The better of the two Sandestin courses you played.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">46</div>
+        <div class="course-body"><div class="course-name">Common Ground</div>
+        <div class="course-meta">Aurora, CO · Tom Doak 2009</div>
+        <div class="course-note">Quality Denver muni — actually a Doak design, which most people don't realize. Punches above its price.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">47</div>
+        <div class="course-body"><div class="course-name">Fox Hollow</div>
+        <div class="course-meta">Lakewood, CO</div>
+        <div class="course-note">Solid Front Range muni. Multiple nines, good value.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">48</div>
+        <div class="course-body"><div class="course-name">Sunstone</div>
+        <div class="course-meta">Pemberton, BC · Boyd Barr 1989</div>
+        <div class="course-price"><span class="price-amount">C$85–95</span> <span class="price-note">summer · ≈ US$59–66</span></div>
+        <div class="course-note">The old Pemberton Valley course, renamed from the Meadows at Pemberton in 2021. Open front nine with an island-green par-4 8th, tight wooded back, Mount Currie overhead. Relaxed local's round down the road from Big Sky.</div></div>
+        <div class="course-tags"><span class="tag tag-international">Canada</span></div></div>
+
+      <div class="course"><div class="course-rank">49</div>
+        <div class="course-body"><div class="course-name">Baylands</div>
+        <div class="course-meta">Palo Alto, CA</div>
+        <div class="course-note">Decent links-style Bay Area public. Wind is the defense.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">50</div>
+        <div class="course-body"><div class="course-name">Metropolitan</div>
+        <div class="course-meta">Oakland, CA</div>
+        <div class="course-note">Decent East Bay public. Holes work; nothing memorable.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">51</div>
+        <div class="course-body"><div class="course-name">Baytowne (Sandestin)</div>
+        <div class="course-meta">Miramar Beach, FL</div>
+        <div class="course-note">Average Destin resort track. Step below Raven on the same property.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">52</div>
+        <div class="course-body"><div class="course-name">Moffett Field</div>
+        <div class="course-meta">Mountain View, CA</div>
+        <div class="course-note">Decent South Bay public on military land. Flat, fair, forgettable.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">53</div>
+        <div class="course-body"><div class="course-name">Rooster Run</div>
+        <div class="course-meta">Petaluma, CA</div>
+        <div class="course-note">Sonoma daily-fee. Open, windy, treeless. Affordable.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">54</div>
+        <div class="course-body"><div class="course-name">Sun Hills</div>
+        <div class="course-meta">Layton, UT · Bruce Summerhays 1996</div>
+        <div class="course-price"><span class="price-amount">$36</span> <span class="price-note">walking</span></div>
+        <div class="course-note">Links-style Davis County daily-fee over the East Layton foothills, designed by Champions Tour winner Bruce Summerhays. Cheap and friendly; slope 116.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">55</div>
+        <div class="course-body"><div class="course-name">Jebel Ali</div>
+        <div class="course-meta">Dubai, UAE</div>
+        <div class="course-note">9-hole resort course in Dubai. Novelty value primarily.</div></div>
+        <div class="course-tags"><span class="tag tag-international">UAE</span><span class="tag tag-9hole">9 Holes</span></div></div>
+    </div>
+  </section>
+
+  <!-- ===== TIER IV: CHEAP MUNIS ===== -->
+  <section class="tier" id="munis">
+    <div class="tier-header">
+      <div class="tier-mark">Tier IV</div>
+      <h2 class="tier-title">Cheap Munis</h2>
+      <div class="tier-count">6 courses</div>
+    </div>
+    <p class="tier-desc">Short courses, par-3s, and 9-holers where prestige isn't really the point. Practice grounds, family rounds, casual play.</p>
+
+    <div class="courses">
+      <div class="course"><div class="course-rank">56</div>
+        <div class="course-body"><div class="course-name">Fleming 9 (Harding Park)</div>
+        <div class="course-meta">San Francisco, CA · Jack Fleming 1961 · Par 30</div>
+        <div class="course-price"><span class="price-amount">$56</span> <span class="price-note">9 holes</span></div>
+        <div class="course-note">Executive nine tucked inside Harding — six par-3s, three par-4s. Named for MacKenzie protégé and longtime SF muni keeper Jack Fleming; greens rebuilt in the 2000s restoration. Home of First Tee SF.</div></div>
+        <div class="course-tags"><span class="tag tag-9hole">9 Holes</span></div></div>
+
+      <div class="course"><div class="course-rank">57</div>
+        <div class="course-body"><div class="course-name">The Homestead</div>
+        <div class="course-meta">Lakewood, CO · Par 65</div>
+        <div class="course-note">Par-65 executive course. Useful for short-game work.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">58</div>
+        <div class="course-body"><div class="course-name">Mill Valley</div>
+        <div class="course-meta">Mill Valley, CA</div>
+        <div class="course-note">Charming community 9-holer. Local favorite, low-key.</div></div>
+        <div class="course-tags"><span class="tag tag-9hole">9 Holes</span></div></div>
+
+      <div class="course"><div class="course-rank">59</div>
+        <div class="course-body"><div class="course-name">Lake Hawea</div>
+        <div class="course-meta">Otago, New Zealand</div>
+        <div class="course-note">Casual NZ 9-holer near Wanaka. Setting beats the course.</div></div>
+        <div class="course-tags"><span class="tag tag-international">New Zealand</span><span class="tag tag-9hole">9 Holes</span></div></div>
+
+      <div class="course"><div class="course-rank">60</div>
+        <div class="course-body"><div class="course-name">Foothills Par 3</div>
+        <div class="course-meta">Lakewood, CO</div>
+        <div class="course-note">Denver par-3. Wedge work.</div></div>
+        <div class="course-tags"></div></div>
+
+      <div class="course"><div class="course-rank">61</div>
+        <div class="course-body"><div class="course-name">Golden Gate Park</div>
+        <div class="course-meta">San Francisco, CA</div>
+        <div class="course-note">SF par-3 in the park. Quick urban round.</div></div>
+        <div class="course-tags"><span class="tag tag-9hole">9 Holes</span></div></div>
+    </div>
+  </section>
+
+  <!-- COLOPHON -->
+  <div class="colophon">
+    Compiled from Golfshot scorecards, Golf Digest 2025–26 rankings, and Golfweek's Best lists ·
+    Set in Inter and Lora ·
+    Last revised November 24, 2026
+  </div>
+
+</div>
+
+</body>
+</html>
